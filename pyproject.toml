@@ -8,6 +8,8 @@ authors = ["Luka Smyth"]
 [tool.poetry.dependencies]
 python = ">=3.10,<3.11"
 pydantic-settings = "^2.1.0"
+llama-index = "^0.9.37.post1"
+pypdf = "^4.0.0"
 
 
 [tool.poetry.group.dev.dependencies]
