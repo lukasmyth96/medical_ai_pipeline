@@ -1,6 +1,7 @@
 from pathlib import Path
 
 from env import env  # noqa
+from pipelines.pre_authorization.pipeline_steps import extract_requested_cpt_codes
 
 from llama_index import (
     VectorStoreIndex,
@@ -18,7 +19,7 @@ if __name__ == '__main__':
 
     documents = SimpleDirectoryReader(
         input_files=[
-            DATA_DIR / 'medical-record-1.pdf'
+            DATA_DIR / 'medical-record-3.pdf'
         ],
         filename_as_id=True,
     ).load_data()
@@ -34,7 +35,6 @@ if __name__ == '__main__':
         index = load_index_from_storage(storage_context)
         refreshed_docs = index.refresh_ref_docs(documents)
 
-    # either way we can now query the index
-    query_engine = index.as_query_engine()
-    response = query_engine.query("What is the patient's name?")
-    print(response)
+    cpt_codes = extract_requested_cpt_codes(index)
+
+    print('CPT Code(s): ', cpt_codes)
