@@ -1,6 +1,6 @@
 from pathlib import Path
 
-from env import env
+from env import env  # noqa
 
 from llama_index import (
     VectorStoreIndex,
