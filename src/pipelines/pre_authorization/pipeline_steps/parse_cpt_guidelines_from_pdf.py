@@ -1,7 +1,7 @@
 from pathlib import Path
+import logging
 
 from pypdf import PdfReader
-
 from openai import OpenAI
 
 from utils.prompt_utils import multiline_prompt
@@ -34,6 +34,8 @@ def parse_cpt_guidelines_from_pdf(pdf_file_path: str | Path):
             1.2 ...
     ```
     """
+    logging.info(f'Parsing CPT guidelines from PDF: {pdf_file_path}...')
+
     reader = PdfReader(str(pdf_file_path))
 
     cpt_guidelines = reader.pages[0].extract_text()
@@ -41,6 +43,8 @@ def parse_cpt_guidelines_from_pdf(pdf_file_path: str | Path):
     cpt_guidelines = _strip_text_preceding_first_bullet_point(cpt_guidelines)
 
     cpt_guidelines = _convert_to_enumerated_bullet_points(cpt_guidelines)
+
+    logging.info('Successfully parsed CPT guidelines from PDF ✅')
 
     return cpt_guidelines
 

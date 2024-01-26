@@ -1,12 +1,5 @@
 from pathlib import Path
-
-from env import env  # noqa
-from pipelines.pre_authorization.pipeline_steps import (
-    extract_requested_cpt_codes,
-    extract_prior_treatment_information,
-    parse_cpt_guidelines_from_pdf,
-    create_cpt_guidelines_tree,
-)
+import logging
 
 from llama_index import (
     VectorStoreIndex,
@@ -14,6 +7,18 @@ from llama_index import (
     StorageContext,
     load_index_from_storage,
 )
+
+from env import env  # noqa
+from utils.pydantic_utils import pretty_print_pydantic
+from pipelines.pre_authorization.pipeline_steps import (
+    extract_requested_cpt_codes,
+    extract_prior_treatment_information,
+    parse_cpt_guidelines_from_pdf,
+    create_cpt_guidelines_tree,
+    are_cpt_guideline_criteria_met,
+)
+
+logging.basicConfig(level=logging.INFO)
 
 DATA_DIR = Path("/Users/lukasmyth/PycharmProjects/medical_ai_pipeline/data")
 
@@ -49,6 +54,14 @@ if __name__ == '__main__':
 
     # CONVERT CPT GUIDELINES TO DECISION TREE
     cpt_guidelines_tree = create_cpt_guidelines_tree(colonoscopy_guidelines)
+
+    # DETERMINE IF CPT GUIDELINES CRITERIA ARE MET
+    cpt_guideline_results = are_cpt_guideline_criteria_met(
+        cpt_guideline_tree=cpt_guidelines_tree,
+        index=index,
+    )
+
+    pretty_print_pydantic(cpt_guideline_results)
 
     # EXTRACTING CPT CODE FROM MEDICAL RECORD
     cpt_codes = extract_requested_cpt_codes(index)

@@ -1,11 +1,11 @@
 from __future__ import annotations
 
 from enum import Enum
-from typing import Optional
+import logging
 
 from llama_index.llms import OpenAI
 from llama_index.program import OpenAIPydanticProgram
-from pydantic import BaseModel
+from pydantic import BaseModel, field_serializer
 
 from utils.prompt_utils import multiline_prompt
 
@@ -16,21 +16,32 @@ class LogicalOperator(Enum):
     NONE = "NONE"
 
 
-class Criteria(BaseModel):
-    criterion: str
+class Criterion(BaseModel):
     criterion_id: str
-    sub_criteria: list[Criteria]
-    sub_criteria_operator: Optional[LogicalOperator] = None
+    criterion: str
+    criterion_question: str | None = None
+    sub_criteria: list[Criterion]
+    sub_criteria_operator: LogicalOperator | None = None
+
+    @field_serializer('sub_criteria_operator')
+    def serialize_operator(self, criteria_operator: LogicalOperator, *args):
+        return criteria_operator.value if criteria_operator else None
 
 
 class CPTGuidelineTree(BaseModel):
     """A nested tree representation of a set of CPT guidelines."""
     treatment: str
-    criteria: list[Criteria]
+    criteria: list[Criterion]
     criteria_operator: LogicalOperator
 
+    @field_serializer('criteria_operator')
+    def serialize_operator(self, criteria_operator: LogicalOperator, *args):
+        return criteria_operator.value if criteria_operator else None
 
-def create_cpt_guidelines_tree(cpt_guidelines: str) -> Criteria:
+
+def create_cpt_guidelines_tree(cpt_guidelines: str) -> CPTGuidelineTree:
+    logging.info('Converting CPT guidelines into decision tree...')
+
     prompt_template_str = create_prompt()
 
     llm = OpenAI(
@@ -42,12 +53,14 @@ def create_cpt_guidelines_tree(cpt_guidelines: str) -> Criteria:
         output_cls=CPTGuidelineTree,
         prompt_template_str=prompt_template_str,
         llm=llm,
-        verbose=True,
+        verbose=False,
     )
 
     cpt_guidelines_tree = program(
         cpt_guidelines=cpt_guidelines
     )
+
+    logging.info('Successfully converted CPT guidelines into decision tree ✅')
 
     return cpt_guidelines_tree
 
@@ -66,6 +79,7 @@ def create_prompt() -> str:
         
         And each criteria object contains the following fields:
         - criterion: The criterion for a single bullet point.
+        - criterion_question: A short yes or no question to determine whether this criterion is met. This field should only be populated for criteria that don't have sub-criteria.
         - criterion_id: The numeric ID of the bullet point in the format x.y.z.
         - sub_criteria: A (potentially empty) list of sub-criteria which are part of this criterion.
         - sub_criteria_operator: A logic operator which determines whether any or all of the sub-criteria must be met. The value should be "AND" if all criteria must be met or "OR" if any 1 criteria is sufficient.
@@ -86,17 +100,20 @@ def create_prompt() -> str:
             "criteria": [
                 {{
                     "criterion": "Patient has average risk or higher",
+                    "criterion_question": null,
                     "criterion_id": "1.1",
                     "sub_criteria_operator": "AND",
                     "sub_criteria": [
                         {{
                             "criterion": "Age 60 or older",
+                            "criterion_question": "Is the patient 60 years old or older?",
                             "criterion_id": "1.1.1",
                             "sub_criteria": [],
                             "sub_criteria_operator": null
                         }},
                         {{
                             "criterion": "Fell on a hard surface.",
+                            "criterion_question": "Did the patient fall on a hard surface?",
                             "criterion_id": "1.1.2",
                             "sub_criteria": [],
                             "sub_criteria_operator": null
@@ -110,12 +127,14 @@ def create_prompt() -> str:
                     "sub_criteria": [
                         {{
                             "criterion": "First-degree relative has brittle bone disease.",
+                            "criterion_question": "Does the patient have a first-degree relative has brittle bone disease?",
                             "criterion_id": "1.2.1",
                             "sub_criteria": [],
                             "sub_criteria_operator": null
                         }},
                         {{
                             "criterion": "Symptomatic (e.g. visible broken bone)",
+                            "criterion_question": "Is the patient symptomatic (e.g. visible broken bone)?",
                             "criterion_id": "1.2.2",
                             "sub_criteria": [],
                             "sub_criteria_operator": null
