@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from enum import Enum
+import logging
 from typing import Optional
 
 from llama_index.llms import OpenAI
@@ -16,21 +17,23 @@ class LogicalOperator(Enum):
     NONE = "NONE"
 
 
-class Criteria(BaseModel):
+class Criterion(BaseModel):
     criterion: str
     criterion_id: str
-    sub_criteria: list[Criteria]
+    sub_criteria: list[Criterion]
     sub_criteria_operator: Optional[LogicalOperator] = None
 
 
 class CPTGuidelineTree(BaseModel):
     """A nested tree representation of a set of CPT guidelines."""
     treatment: str
-    criteria: list[Criteria]
+    criteria: list[Criterion]
     criteria_operator: LogicalOperator
 
 
-def create_cpt_guidelines_tree(cpt_guidelines: str) -> Criteria:
+def create_cpt_guidelines_tree(cpt_guidelines: str) -> CPTGuidelineTree:
+    logging.info(f'Converting CPT guidelines into decision tree...')
+
     prompt_template_str = create_prompt()
 
     llm = OpenAI(
@@ -42,12 +45,14 @@ def create_cpt_guidelines_tree(cpt_guidelines: str) -> Criteria:
         output_cls=CPTGuidelineTree,
         prompt_template_str=prompt_template_str,
         llm=llm,
-        verbose=True,
+        verbose=False,
     )
 
     cpt_guidelines_tree = program(
         cpt_guidelines=cpt_guidelines
     )
+
+    logging.info(f'Successfully converted CPT guidelines into decision tree ✅')
 
     return cpt_guidelines_tree
 
