@@ -61,6 +61,8 @@ if __name__ == '__main__':
         index=index,
     )
 
+    pretty_print_pydantic(cpt_guideline_results)
+
     # EXTRACTING CPT CODE FROM MEDICAL RECORD
     cpt_codes = extract_requested_cpt_codes(index)
     print('Requested CPT Code(s): ', cpt_codes)

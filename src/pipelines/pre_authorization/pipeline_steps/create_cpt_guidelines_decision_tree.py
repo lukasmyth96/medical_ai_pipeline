@@ -40,7 +40,7 @@ class CPTGuidelineTree(BaseModel):
 
 
 def create_cpt_guidelines_tree(cpt_guidelines: str) -> CPTGuidelineTree:
-    logging.info(f'Converting CPT guidelines into decision tree...')
+    logging.info('Converting CPT guidelines into decision tree...')
 
     prompt_template_str = create_prompt()
 
@@ -60,7 +60,7 @@ def create_cpt_guidelines_tree(cpt_guidelines: str) -> CPTGuidelineTree:
         cpt_guidelines=cpt_guidelines
     )
 
-    logging.info(f'Successfully converted CPT guidelines into decision tree ✅')
+    logging.info('Successfully converted CPT guidelines into decision tree ✅')
 
     return cpt_guidelines_tree
 

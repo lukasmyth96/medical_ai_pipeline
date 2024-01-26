@@ -44,7 +44,7 @@ def parse_cpt_guidelines_from_pdf(pdf_file_path: str | Path):
 
     cpt_guidelines = _convert_to_enumerated_bullet_points(cpt_guidelines)
 
-    logging.info(f'Successfully parsed CPT guidelines from PDF ✅')
+    logging.info('Successfully parsed CPT guidelines from PDF ✅')
 
     return cpt_guidelines
 
