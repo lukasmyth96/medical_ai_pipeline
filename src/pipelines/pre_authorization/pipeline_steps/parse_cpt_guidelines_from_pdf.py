@@ -2,7 +2,7 @@ from pathlib import Path
 
 from pypdf import PdfReader
 
-import openai
+from openai import OpenAI
 
 from utils.prompt_utils import multiline_prompt
 
@@ -124,13 +124,14 @@ def _convert_to_enumerated_bullet_points(cpt_guidelines: str) -> str:
         }
     ]
 
-    response = openai.ChatCompletion.create(
+    client = OpenAI()
+    response = client.chat.completions.create(
         model="gpt-3.5-turbo",
         messages=messages,
-        temperature=0,
+        temperature=0
     )
 
-    cpt_guidelines = response['choices'][0]['message']['content']
+    cpt_guidelines = response.choices[0].message.content
 
     return cpt_guidelines
 

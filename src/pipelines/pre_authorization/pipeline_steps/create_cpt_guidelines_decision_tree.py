@@ -3,6 +3,7 @@ from __future__ import annotations
 from enum import Enum
 from typing import Optional
 
+from llama_index.llms import OpenAI
 from llama_index.program import OpenAIPydanticProgram
 from pydantic import BaseModel
 
@@ -12,13 +13,14 @@ from utils.prompt_utils import multiline_prompt
 class LogicalOperator(Enum):
     AND = 'AND'
     OR = 'OR'
+    NONE = "NONE"
 
 
 class Criteria(BaseModel):
     criterion: str
     criterion_id: str
-    sub_criteria: Optional[list[Criteria]] | None = None
-    sub_criteria_operator: Optional[LogicalOperator] | None = None
+    sub_criteria: list[Criteria]
+    sub_criteria_operator: Optional[LogicalOperator] = None
 
 
 class CPTGuidelineTree(BaseModel):
@@ -31,16 +33,23 @@ class CPTGuidelineTree(BaseModel):
 def create_cpt_guidelines_tree(cpt_guidelines: str) -> Criteria:
     prompt_template_str = create_prompt()
 
+    llm = OpenAI(
+        model="gpt-3.5-turbo-0613",
+        temperature=0.0,
+    )
+
     program = OpenAIPydanticProgram.from_defaults(
         output_cls=CPTGuidelineTree,
         prompt_template_str=prompt_template_str,
+        llm=llm,
+        verbose=True,
     )
 
-    response = program(
+    cpt_guidelines_tree = program(
         cpt_guidelines=cpt_guidelines
     )
 
-    return response
+    return cpt_guidelines_tree
 
 
 def create_prompt() -> str:
@@ -64,7 +73,7 @@ def create_prompt() -> str:
         Example Input:
         1 Xray, as indicated by 1 or more of the following:
             1.1 Patient has average risk or higher, as indicated by ALL or the following:
-                1.1.1 Age 60 or older. 
+                1.1.1 Age 60 or older.
                 1.1.2 Fell on a hard surface.
             1.2 High risk family history, as indicated by 1 or more of the following:
                 1.2.1 First-degree relative has brittle bone disease.
@@ -82,11 +91,15 @@ def create_prompt() -> str:
                     "sub_criteria": [
                         {{
                             "criterion": "Age 60 or older",
-                            "criterion_id": "1.1.1"
+                            "criterion_id": "1.1.1",
+                            "sub_criteria": [],
+                            "sub_criteria_operator": null
                         }},
                         {{
                             "criterion": "Fell on a hard surface.",
-                            "criterion_id": "1.1.2"
+                            "criterion_id": "1.1.2",
+                            "sub_criteria": [],
+                            "sub_criteria_operator": null
                         }}
                     ]
                 }},
@@ -97,11 +110,15 @@ def create_prompt() -> str:
                     "sub_criteria": [
                         {{
                             "criterion": "First-degree relative has brittle bone disease.",
-                            "criterion_id": "1.2.1"
+                            "criterion_id": "1.2.1",
+                            "sub_criteria": [],
+                            "sub_criteria_operator": null
                         }},
                         {{
                             "criterion": "Symptomatic (e.g. visible broken bone)",
-                            "criterion_id": "1.2.2"
+                            "criterion_id": "1.2.2",
+                            "sub_criteria": [],
+                            "sub_criteria_operator": null
                         }}
                     ]
                 }}

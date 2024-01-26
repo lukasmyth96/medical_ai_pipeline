@@ -15,8 +15,6 @@ from llama_index import (
     load_index_from_storage,
 )
 
-from utils.prompt_utils import multiline_prompt
-
 DATA_DIR = Path("/Users/lukasmyth/PycharmProjects/medical_ai_pipeline/data")
 
 STORAGE_ROOT_DIR = Path("/Users/lukasmyth/PycharmProjects/medical_ai_pipeline/database/llama_index_storage")
@@ -46,20 +44,19 @@ if __name__ == '__main__':
         index = load_index_from_storage(storage_context)
         refreshed_docs = index.refresh_ref_docs(documents)
 
-    # 1) CONVERT CPT GUIDELINES TO DECISION TREE
+    # PARSE AND FORMAT CPT GUIDELINES FROM PDF
     colonoscopy_guidelines = parse_cpt_guidelines_from_pdf(DATA_DIR / 'colonoscopy-guidelines.pdf')
 
+    # CONVERT CPT GUIDELINES TO DECISION TREE
     cpt_guidelines_tree = create_cpt_guidelines_tree(colonoscopy_guidelines)
 
-    # 2) EXTRACTING CPT CODE FROM MEDICAL RECORD
+    # EXTRACTING CPT CODE FROM MEDICAL RECORD
     cpt_codes = extract_requested_cpt_codes(index)
     print('Requested CPT Code(s): ', cpt_codes)
 
-    # 3) DETERMINE WHETHER CONSERVATIVE TREATMENT WAS ATTEMPTED / SUCCESSFUL
+    # DETERMINE WHETHER CONSERVATIVE TREATMENT WAS ATTEMPTED / SUCCESSFUL
     prior_treatment = extract_prior_treatment_information(index)
     print('Prior treatment attempted: ', prior_treatment.was_treatment_attempted)
     print('Evidence: ', prior_treatment.evidence_of_whether_treatment_was_attempted)
     print('Prior treatment successful: ', prior_treatment.was_treatment_successful)
     print('Evidence: ', prior_treatment.evidence_of_whether_treatment_was_successful)
-
-
