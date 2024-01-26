@@ -4,6 +4,8 @@ from env import env  # noqa
 from pipelines.pre_authorization.pipeline_steps import (
     extract_requested_cpt_codes,
     extract_prior_treatment_information,
+    parse_cpt_guidelines_from_pdf,
+    create_cpt_guidelines_tree,
 )
 
 from llama_index import (
@@ -20,7 +22,7 @@ STORAGE_ROOT_DIR = Path("/Users/lukasmyth/PycharmProjects/medical_ai_pipeline/da
 
 if __name__ == '__main__':
 
-    filename = 'medical-record-3.pdf'
+    filename = 'medical-record-1.pdf'
 
     documents = SimpleDirectoryReader(
         input_files=[
@@ -42,9 +44,17 @@ if __name__ == '__main__':
         index = load_index_from_storage(storage_context)
         refreshed_docs = index.refresh_ref_docs(documents)
 
+    # PARSE AND FORMAT CPT GUIDELINES FROM PDF
+    colonoscopy_guidelines = parse_cpt_guidelines_from_pdf(DATA_DIR / 'colonoscopy-guidelines.pdf')
+
+    # CONVERT CPT GUIDELINES TO DECISION TREE
+    cpt_guidelines_tree = create_cpt_guidelines_tree(colonoscopy_guidelines)
+
+    # EXTRACTING CPT CODE FROM MEDICAL RECORD
     cpt_codes = extract_requested_cpt_codes(index)
     print('Requested CPT Code(s): ', cpt_codes)
 
+    # DETERMINE WHETHER CONSERVATIVE TREATMENT WAS ATTEMPTED / SUCCESSFUL
     prior_treatment = extract_prior_treatment_information(index)
     print('Prior treatment attempted: ', prior_treatment.was_treatment_attempted)
     print('Evidence: ', prior_treatment.evidence_of_whether_treatment_was_attempted)
