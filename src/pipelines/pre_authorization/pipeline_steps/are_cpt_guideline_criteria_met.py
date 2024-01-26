@@ -5,9 +5,12 @@ from llama_index import VectorStoreIndex, ServiceContext
 from llama_index.llms import OpenAI
 from pydantic import BaseModel
 
-from pipelines.pre_authorization.pipeline_steps.create_cpt_guidelines_decision_tree import CPTGuidelineTree, Criterion, \
-    LogicalOperator
 from utils.prompt_utils import multiline_prompt
+from pipelines.pre_authorization.pipeline_steps.create_cpt_guidelines_decision_tree import (
+    CPTGuidelineTree,
+    Criterion,
+    LogicalOperator,
+)
 
 
 class CriterionResult(BaseModel):
