@@ -1,3 +1,5 @@
+import logging
+
 from llama_index import VectorStoreIndex
 from pydantic import BaseModel
 
@@ -6,8 +8,8 @@ from pipelines.pre_authorization.pipeline_steps.create_cpt_guidelines_decision_t
 
 
 class CriterionResult(BaseModel):
-    criterion: str
     criterion_id: str
+    criterion: str
     is_criterion_met: bool
 
 
@@ -39,10 +41,14 @@ def are_cpt_guideline_criteria_met(
         Stores the overall result of whether the criteria are met
         as well as a breakdown of each individual criterion.
     """
+    logging.info(f'Determining if CPT guideline criteria are met...')
+
     is_criteria_met, criteria_results = _evaluate_criteria(
         criteria=cpt_guideline_tree.criteria,
         operator=cpt_guideline_tree.criteria_operator,
     )
+
+    logging.info(f'Successfully determined if CPT guideline criteria are met ✅')
 
     return CPTGuidelineResults(
         is_criteria_met=is_criteria_met,
@@ -95,7 +101,7 @@ def _evaluate_criteria(
                 criteria=criterion.sub_criteria,
                 operator=criterion.sub_criteria_operator or LogicalOperator.NONE
             )
-            results.extend(
+            results.append(
                 CriterionResult(
                     criterion=criterion.criterion,
                     criterion_id=criterion.criterion_id,

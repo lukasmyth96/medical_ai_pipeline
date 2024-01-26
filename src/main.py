@@ -1,20 +1,21 @@
 from pathlib import Path
 import logging
 
+from llama_index import (
+    VectorStoreIndex,
+    SimpleDirectoryReader,
+    StorageContext,
+    load_index_from_storage,
+)
+
 from env import env  # noqa
+from utils.pydantic_utils import pretty_print_pydantic
 from pipelines.pre_authorization.pipeline_steps import (
     extract_requested_cpt_codes,
     extract_prior_treatment_information,
     parse_cpt_guidelines_from_pdf,
     create_cpt_guidelines_tree,
     are_cpt_guideline_criteria_met,
-)
-
-from llama_index import (
-    VectorStoreIndex,
-    SimpleDirectoryReader,
-    StorageContext,
-    load_index_from_storage,
 )
 
 logging.basicConfig(level=logging.INFO)
