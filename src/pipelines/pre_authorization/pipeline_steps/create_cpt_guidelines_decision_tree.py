@@ -28,7 +28,7 @@ class CPTGuidelineTree(BaseModel):
     criteria_operator: LogicalOperator
 
 
-def create_cpt_guidelines_tree(cpt_guidelines_str: str) -> Criteria:
+def create_cpt_guidelines_tree(cpt_guidelines: str) -> Criteria:
     prompt_template_str = create_prompt()
 
     program = OpenAIPydanticProgram.from_defaults(
@@ -37,7 +37,7 @@ def create_cpt_guidelines_tree(cpt_guidelines_str: str) -> Criteria:
     )
 
     response = program(
-        cpt_guidelines=cpt_guidelines_str
+        cpt_guidelines=cpt_guidelines
     )
 
     return response
