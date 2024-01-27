@@ -1,0 +1,1 @@
+from .pipeline import cpt_guideline_ingestion_pipeline
