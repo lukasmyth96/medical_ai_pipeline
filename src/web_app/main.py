@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from fastapi import FastAPI
 
 from web_app.routes import router

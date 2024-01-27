@@ -7,13 +7,14 @@ from pipelines.cpt_guideline_ingestion.pipeline_steps import (
     parse_cpt_guidelines_from_pdf,
     create_guideline_decision_tree,
 )
+from utils.pydantic_utils import pretty_print_pydantic
 
 
 def cpt_guideline_ingestion_pipeline(
         cpt_guideline_file_path: str | Path,
         cpt_code: str,
         overwrite: bool = False,
-) -> str:
+) -> CPTGuidelinesDocument:
     """
     Parses guidelines and CPT code from file, creates decision tree for
     guidelines and stores both in a document in the DB.
@@ -61,7 +62,7 @@ def cpt_guideline_ingestion_pipeline(
         overwrite=overwrite,
     )
 
-    return document_id
+    return document
 
 
 if __name__ == '__main__':
@@ -71,8 +72,9 @@ if __name__ == '__main__':
     overwrite_if_exists = "y" in input("Do you want to overwrite if exists? (y/n): ").lower()
     file_path = Path(file_path)
     assert file_path.exists(), 'Guideline file does not exist'
-    cpt_guideline_ingestion_pipeline(
+    document = cpt_guideline_ingestion_pipeline(
         cpt_guideline_file_path=file_path,
         cpt_code=cpt_code,
         overwrite=overwrite_if_exists,
     )
+    pretty_print_pydantic(document)

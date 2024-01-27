@@ -6,22 +6,10 @@ from pydantic import BaseModel, field_serializer
 from enum import Enum
 
 
-class CPTGuidelinesDocument(BaseModel):
-    file_path: str | Path
-    cpt_code: str
-    guidelines: str
-    decision_tree: GuidelineDecisionTree
-
-
-class GuidelineDecisionTree(BaseModel):
-    """A nested tree representation of a set of CPT guidelines."""
-    treatment: str
-    criteria: list[Criterion]
-    criteria_operator: LogicalOperator
-
-    @field_serializer('criteria_operator')
-    def serialize_operator(self, criteria_operator: LogicalOperator, *args):
-        return criteria_operator.value if criteria_operator else None
+class LogicalOperator(Enum):
+    AND = 'AND'
+    OR = 'OR'
+    NONE = "NONE"
 
 
 class Criterion(BaseModel):
@@ -36,7 +24,18 @@ class Criterion(BaseModel):
         return criteria_operator.value if criteria_operator else None
 
 
-class LogicalOperator(Enum):
-    AND = 'AND'
-    OR = 'OR'
-    NONE = "NONE"
+class GuidelineDecisionTree(BaseModel):
+    """A nested tree representation of a set of CPT guidelines."""
+    treatment: str
+    criteria: list[Criterion]
+    criteria_operator: LogicalOperator
+
+    @field_serializer('criteria_operator')
+    def serialize_operator(self, criteria_operator: LogicalOperator, *args):
+        return criteria_operator.value if criteria_operator else None
+
+class CPTGuidelinesDocument(BaseModel):
+    file_path: str | Path
+    cpt_code: str
+    guidelines: str
+    decision_tree: GuidelineDecisionTree

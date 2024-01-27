@@ -1,0 +1,1 @@
+from web_app.routes.api.guidelines_ingest import router as pre_authorization_guidelines_ingest_route
