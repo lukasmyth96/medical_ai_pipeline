@@ -42,7 +42,7 @@ class PreAuthorizationPipelineResult(BaseModel):
 def pre_authorization_pipeline(
         medical_record_file_path: str | Path,
         force_reindex: bool = False,
-):
+) -> PreAuthorizationPipelineResult:
     # 1) Load and index medical record for RAG pipeline.
     index = index_medical_record(
         medical_record_file_path=medical_record_file_path,

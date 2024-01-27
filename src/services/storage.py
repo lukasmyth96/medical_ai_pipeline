@@ -12,6 +12,7 @@ from env import env
 
 class Bucket(Enum):
     CPT_GUIDELINES = 'cpt_guidelines'
+    MEDICAL_RECORDS = 'medical_records'
 
 
 class DatabaseException(Exception):
