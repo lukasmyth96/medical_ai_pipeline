@@ -1,0 +1,92 @@
+{
+    "file_path": "/Users/lukasmyth/PycharmProjects/medical_ai_pipeline/data/colonoscopy-guidelines.pdf",
+    "cpt_code": "45378",
+    "guidelines": "1. Colorectal cancer screening, as indicated by 1 or more of the following:\n1.1. Patient has average-risk or higher, as indicated by ALL of the following:\n1.1.1. Age 45 years or older\n1.1.2. No colonoscopy in past 10 years\n1.2. High risk family history, as indicated by 1 or more of the following:\n1.2.1. Colorectal cancer diagnosed in one or more first-degree relatives of any age and ALL of the following:\n1.2.1.1. Age 40 years or older\n1.2.1.2. Symptomatic (eg, abdominal pain, iron deficiency anemia, rectal bleeding)\n1.2.2. Family member with colonic adenomatous polyposis of unknown etiology\n1.3. Juvenile polyposis syndrome diagnosis indicated by 1 or more of the following:\n1.3.1. Age 12 years or older and symptomatic (eg, abdominal pain, iron deficiency anemia, rectal bleeding, telangiectasia)\n1.3.2. Age younger than 12 years and symptomatic (eg, abdominal pain, iron deficiency anemia, rectal bleeding, telangiectasia)",
+    "decision_tree": {
+        "treatment": "Colorectal cancer screening",
+        "criteria": [
+            {
+                "criterion_id": "1.1",
+                "criterion": "Patient has average-risk or higher",
+                "criterion_question": null,
+                "sub_criteria": [
+                    {
+                        "criterion_id": "1.1.1",
+                        "criterion": "Age 45 years or older",
+                        "criterion_question": "Is the patient 45 years old or older?",
+                        "sub_criteria": [],
+                        "sub_criteria_operator": null
+                    },
+                    {
+                        "criterion_id": "1.1.2",
+                        "criterion": "No colonoscopy in past 10 years",
+                        "criterion_question": "Has the patient had a colonoscopy in the past 10 years?",
+                        "sub_criteria": [],
+                        "sub_criteria_operator": null
+                    }
+                ],
+                "sub_criteria_operator": "AND"
+            },
+            {
+                "criterion_id": "1.2",
+                "criterion": "High risk family history",
+                "criterion_question": null,
+                "sub_criteria": [
+                    {
+                        "criterion_id": "1.2.1",
+                        "criterion": "Colorectal cancer diagnosed in one or more first-degree relatives of any age",
+                        "criterion_question": "Has colorectal cancer been diagnosed in one or more first-degree relatives of any age?",
+                        "sub_criteria": [
+                            {
+                                "criterion_id": "1.2.1.1",
+                                "criterion": "Age 40 years or older",
+                                "criterion_question": "Is the age of the first-degree relative 40 years or older?",
+                                "sub_criteria": [],
+                                "sub_criteria_operator": null
+                            },
+                            {
+                                "criterion_id": "1.2.1.2",
+                                "criterion": "Symptomatic (eg, abdominal pain, iron deficiency anemia, rectal bleeding)",
+                                "criterion_question": "Is the first-degree relative symptomatic (eg, abdominal pain, iron deficiency anemia, rectal bleeding)?",
+                                "sub_criteria": [],
+                                "sub_criteria_operator": null
+                            }
+                        ],
+                        "sub_criteria_operator": "AND"
+                    },
+                    {
+                        "criterion_id": "1.2.2",
+                        "criterion": "Family member with colonic adenomatous polyposis of unknown etiology",
+                        "criterion_question": "Does the patient have a family member with colonic adenomatous polyposis of unknown etiology?",
+                        "sub_criteria": [],
+                        "sub_criteria_operator": null
+                    }
+                ],
+                "sub_criteria_operator": "OR"
+            },
+            {
+                "criterion_id": "1.3",
+                "criterion": "Juvenile polyposis syndrome diagnosis indicated",
+                "criterion_question": null,
+                "sub_criteria": [
+                    {
+                        "criterion_id": "1.3.1",
+                        "criterion": "Age 12 years or older and symptomatic (eg, abdominal pain, iron deficiency anemia, rectal bleeding, telangiectasia)",
+                        "criterion_question": "Is the patient 12 years old or older and symptomatic (eg, abdominal pain, iron deficiency anemia, rectal bleeding, telangiectasia)?",
+                        "sub_criteria": [],
+                        "sub_criteria_operator": null
+                    },
+                    {
+                        "criterion_id": "1.3.2",
+                        "criterion": "Age younger than 12 years and symptomatic (eg, abdominal pain, iron deficiency anemia, rectal bleeding, telangiectasia)",
+                        "criterion_question": "Is the patient younger than 12 years and symptomatic (eg, abdominal pain, iron deficiency anemia, rectal bleeding, telangiectasia)?",
+                        "sub_criteria": [],
+                        "sub_criteria_operator": null
+                    }
+                ],
+                "sub_criteria_operator": "OR"
+            }
+        ],
+        "criteria_operator": "OR"
+    }
+}
