@@ -57,12 +57,18 @@ def pre_authorization_pipeline(
 
     # 3) Load parsed CPT guidelines from database.
     db = Database()
-    guidelines_document = CPTGuidelinesDocument(
-        **db.read(
-            collection=Collection.CPT_GUIDELINES,
-            document_id=cpt_code,
-        )
+    guidelines_document = db.read(
+        collection=Collection.CPT_GUIDELINES,
+        document_id=cpt_code,
+        output_class=CPTGuidelinesDocument,
     )
+    if not guidelines_document:
+        raise RuntimeError(
+            f"""
+            Guidelines for requested CPT code {cpt_code} not available.
+            You must run the CPT Guideline Ingestion pipeline on these guidelines first.
+            """
+        )
 
     # 4) Determine whether prior treatment was attempted and successful.
     prior_treatment = extract_prior_treatment_information(index)

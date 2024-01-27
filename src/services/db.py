@@ -1,6 +1,7 @@
 import json
 from enum import Enum
 from pathlib import Path
+from typing import Type
 from uuid import uuid4
 
 from pydantic import BaseModel
@@ -34,17 +35,20 @@ class Database:
             self,
             collection: Collection,
             document_id: str,
-    ) -> dict:
+            output_class: Type[BaseModel],
+    ) -> BaseModel | None:
         """
         Read document from database.
         """
         file_path = self._file_path(collection, document_id)
 
         if not file_path.exists():
-            raise DatabaseException(f'Document does not exist: {file_path}')
+            return None
 
         with open(file_path, 'r') as file:
             document = json.loads(file.read())
+
+        document = output_class(**document)
 
         return document
 
