@@ -5,11 +5,7 @@ from llama_index import VectorStoreIndex, ServiceContext
 from llama_index.llms import OpenAI
 from pydantic import BaseModel
 
-from pipelines.cpt_guideline_ingestion.pipeline_steps.create_guideline_decision_tree import (
-    Criterion,
-    GuidelineDecisionTree,
-    LogicalOperator,
-)
+from db_models.cpt_guidelines import Criterion, LogicalOperator, GuidelineDecisionTree
 from utils.prompt_utils import multiline_prompt
 
 
@@ -24,7 +20,7 @@ class CriterionResult(BaseModel):
 
 
 class CPTGuidelineResults(BaseModel):
-    is_criteria_met: bool
+    are_criteria_met: bool
     criteria_results: list[CriterionResult]
 
 
@@ -62,7 +58,7 @@ def are_cpt_guideline_criteria_met(
     logging.info('Successfully determined if CPT guideline criteria are met ✅')
 
     return CPTGuidelineResults(
-        is_criteria_met=is_criteria_met,
+        are_criteria_met=is_criteria_met,
         criteria_results=criteria_results,
     )
 

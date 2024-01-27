@@ -1,3 +1,4 @@
+from .index_medical_record import index_medical_record
 from .extract_requested_cpt_codes import extract_requested_cpt_codes
 from .extract_prior_treatment_information import extract_prior_treatment_information
 from .are_cpt_guideline_criteria_met import are_cpt_guideline_criteria_met

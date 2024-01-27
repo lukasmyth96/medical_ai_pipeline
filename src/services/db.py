@@ -1,5 +1,6 @@
 import json
 from enum import Enum
+from pathlib import Path
 from uuid import uuid4
 
 from pydantic import BaseModel
@@ -29,6 +30,24 @@ class Database:
             if not collection_path.exists():
                 collection_path.mkdir()
 
+    def read(
+            self,
+            collection: Collection,
+            document_id: str,
+    ) -> dict:
+        """
+        Read document from database.
+        """
+        file_path = self._file_path(collection, document_id)
+
+        if not file_path.exists():
+            raise DatabaseException(f'Document does not exist: {file_path}')
+
+        with open(file_path, 'r') as file:
+            document = json.loads(file.read())
+
+        return document
+
     def create(
             self,
             collection: Collection,
@@ -36,8 +55,11 @@ class Database:
             document_id: str | None = None,
             overwrite: bool = False,
     ):
+        """
+        Create new document in database.
+        """
         document_id = document_id or uuid4()
-        file_path = self.db_dir / collection.value / f'{document_id}.json'
+        file_path = self._file_path(collection, document_id)
 
         if file_path.exists() and not overwrite:
             raise DatabaseException(f'Document already exists: {file_path}')
@@ -56,8 +78,10 @@ class Database:
             document: dict | BaseModel,
             document_id: str,
     ):
-
-        file_path = self.db_dir / collection.value / f'{document_id}.json'
+        """
+        Update existing document in database.
+        """
+        file_path = self._file_path(collection, document_id)
 
         if not file_path.exists():
             raise DatabaseException(f'Cannot update document as does not exist: {file_path}')
@@ -68,3 +92,6 @@ class Database:
             document_id=document_id,
             overwrite=True,
         )
+
+    def _file_path(self, collection: Collection, document_id: str) -> Path:
+        return self.db_dir / collection.value / f'{document_id}.json'

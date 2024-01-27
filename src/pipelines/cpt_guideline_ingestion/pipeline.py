@@ -1,3 +1,4 @@
+import logging
 from pathlib import Path
 
 from db_models.cpt_guidelines import CPTGuidelinesDocument
@@ -46,7 +47,7 @@ def cpt_guideline_ingestion_pipeline(cpt_guideline_file_path: str | Path) -> str
 
 
 if __name__ == '__main__':
-
+    logging.basicConfig(level=logging.INFO)
     file_path = input('Enter the file path for a CPT guidelines: ')
     file_path = Path(file_path)
     assert file_path.exists()
