@@ -34,6 +34,7 @@ class GuidelineDecisionTree(BaseModel):
     def serialize_operator(self, criteria_operator: LogicalOperator, *args):
         return criteria_operator.value if criteria_operator else None
 
+
 class CPTGuidelinesDocument(BaseModel):
     file_path: str | Path
     cpt_code: str

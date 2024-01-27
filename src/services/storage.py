@@ -1,11 +1,6 @@
-import json
 from enum import Enum
-from pathlib import Path
-from typing import Type
-from uuid import uuid4
 
-from fastapi import File, UploadFile
-from pydantic import BaseModel
+from fastapi import UploadFile
 
 from env import env
 

@@ -1,5 +1,5 @@
 {
-    "file_path": "/Users/lukasmyth/PycharmProjects/medical_ai_pipeline/data/colonoscopy-guidelines.pdf",
+    "file_path": "/Users/lukasmyth/PycharmProjects/medical_ai_pipeline/database/file_storage/cpt_guidelines/colonoscopy-guidelines.pdf",
     "cpt_code": "45378",
     "guidelines": "1. Colorectal cancer screening, as indicated by 1 or more of the following:\n1.1. Patient has average-risk or higher, as indicated by ALL of the following:\n1.1.1. Age 45 years or older\n1.1.2. No colonoscopy in past 10 years\n1.2. High risk family history, as indicated by 1 or more of the following:\n1.2.1. Colorectal cancer diagnosed in one or more first-degree relatives of any age and ALL of the following:\n1.2.1.1. Age 40 years or older\n1.2.1.2. Symptomatic (eg, abdominal pain, iron deficiency anemia, rectal bleeding)\n1.2.2. Family member with colonic adenomatous polyposis of unknown etiology\n1.3. Juvenile polyposis syndrome diagnosis indicated by 1 or more of the following:\n1.3.1. Age 12 years or older and symptomatic (eg, abdominal pain, iron deficiency anemia, rectal bleeding, telangiectasia)\n1.3.2. Age younger than 12 years and symptomatic (eg, abdominal pain, iron deficiency anemia, rectal bleeding, telangiectasia)",
     "decision_tree": {

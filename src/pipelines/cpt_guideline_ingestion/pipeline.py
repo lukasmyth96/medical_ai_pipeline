@@ -55,7 +55,7 @@ def cpt_guideline_ingestion_pipeline(
         decision_tree=cpt_guideline_decision_tree,
     )
 
-    document_id = db.create(
+    db.create(
         collection=Collection.CPT_GUIDELINES,
         document=document,
         document_id=cpt_code,
