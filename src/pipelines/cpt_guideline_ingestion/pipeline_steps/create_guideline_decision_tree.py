@@ -1,45 +1,15 @@
 from __future__ import annotations
 
-from enum import Enum
 import logging
 
 from llama_index.llms import OpenAI
 from llama_index.program import OpenAIPydanticProgram
-from pydantic import BaseModel, field_serializer
 
+from db_models.cpt_guidelines import GuidelineDecisionTree
 from utils.prompt_utils import multiline_prompt
 
 
-class LogicalOperator(Enum):
-    AND = 'AND'
-    OR = 'OR'
-    NONE = "NONE"
-
-
-class Criterion(BaseModel):
-    criterion_id: str
-    criterion: str
-    criterion_question: str | None = None
-    sub_criteria: list[Criterion]
-    sub_criteria_operator: LogicalOperator | None = None
-
-    @field_serializer('sub_criteria_operator')
-    def serialize_operator(self, criteria_operator: LogicalOperator, *args):
-        return criteria_operator.value if criteria_operator else None
-
-
-class CPTGuidelineTree(BaseModel):
-    """A nested tree representation of a set of CPT guidelines."""
-    treatment: str
-    criteria: list[Criterion]
-    criteria_operator: LogicalOperator
-
-    @field_serializer('criteria_operator')
-    def serialize_operator(self, criteria_operator: LogicalOperator, *args):
-        return criteria_operator.value if criteria_operator else None
-
-
-def create_cpt_guidelines_tree(cpt_guidelines: str) -> CPTGuidelineTree:
+def create_guideline_decision_tree(cpt_guidelines: str) -> GuidelineDecisionTree:
     logging.info('Converting CPT guidelines into decision tree...')
 
     prompt_template_str = create_prompt()
@@ -50,7 +20,7 @@ def create_cpt_guidelines_tree(cpt_guidelines: str) -> CPTGuidelineTree:
     )
 
     program = OpenAIPydanticProgram.from_defaults(
-        output_cls=CPTGuidelineTree,
+        output_cls=GuidelineDecisionTree,
         prompt_template_str=prompt_template_str,
         llm=llm,
         verbose=False,
