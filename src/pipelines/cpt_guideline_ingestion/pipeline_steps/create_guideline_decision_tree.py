@@ -28,7 +28,7 @@ class Criterion(BaseModel):
         return criteria_operator.value if criteria_operator else None
 
 
-class CPTGuidelineTree(BaseModel):
+class GuidelineDecisionTree(BaseModel):
     """A nested tree representation of a set of CPT guidelines."""
     treatment: str
     criteria: list[Criterion]
@@ -39,7 +39,7 @@ class CPTGuidelineTree(BaseModel):
         return criteria_operator.value if criteria_operator else None
 
 
-def create_cpt_guidelines_tree(cpt_guidelines: str) -> CPTGuidelineTree:
+def create_guideline_decision_tree(cpt_guidelines: str) -> GuidelineDecisionTree:
     logging.info('Converting CPT guidelines into decision tree...')
 
     prompt_template_str = create_prompt()
@@ -50,7 +50,7 @@ def create_cpt_guidelines_tree(cpt_guidelines: str) -> CPTGuidelineTree:
     )
 
     program = OpenAIPydanticProgram.from_defaults(
-        output_cls=CPTGuidelineTree,
+        output_cls=GuidelineDecisionTree,
         prompt_template_str=prompt_template_str,
         llm=llm,
         verbose=False,

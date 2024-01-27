@@ -5,12 +5,12 @@ from llama_index import VectorStoreIndex, ServiceContext
 from llama_index.llms import OpenAI
 from pydantic import BaseModel
 
-from utils.prompt_utils import multiline_prompt
-from pipelines.pre_authorization.pipeline_steps.create_cpt_guidelines_decision_tree import (
-    CPTGuidelineTree,
+from pipelines.cpt_guideline_ingestion.pipeline_steps.create_guideline_decision_tree import (
     Criterion,
+    GuidelineDecisionTree,
     LogicalOperator,
 )
+from utils.prompt_utils import multiline_prompt
 
 
 class CriterionResult(BaseModel):
@@ -29,7 +29,7 @@ class CPTGuidelineResults(BaseModel):
 
 
 def are_cpt_guideline_criteria_met(
-        cpt_guideline_tree: CPTGuidelineTree,
+        cpt_guideline_tree: GuidelineDecisionTree,
         index: VectorStoreIndex,
 ) -> CPTGuidelineResults:
     """
