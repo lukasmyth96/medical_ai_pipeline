@@ -1,7 +1,7 @@
 import logging
 from pathlib import Path
 
-from db_models.cpt_guidelines import CPTGuidelinesDocument
+from data_models.cpt_guideline import CPTGuidelineDocument
 from services.db import Database, Collection
 from pipelines.cpt_guideline_ingestion.pipeline_steps import (
     parse_cpt_guidelines_from_pdf,
@@ -14,7 +14,7 @@ def cpt_guideline_ingestion_pipeline(
         cpt_guideline_file_path: str | Path,
         cpt_code: str,
         overwrite: bool = False,
-) -> CPTGuidelinesDocument:
+) -> CPTGuidelineDocument:
     """
     Parses guidelines and CPT code from file, creates decision tree for
     guidelines and stores both in a document in the DB.
@@ -34,7 +34,7 @@ def cpt_guideline_ingestion_pipeline(
     existing_document = db.read(
         collection=Collection.CPT_GUIDELINES,
         document_id=cpt_code,
-        output_class=CPTGuidelinesDocument
+        output_class=CPTGuidelineDocument
     )
 
     if existing_document and not overwrite:
@@ -48,7 +48,7 @@ def cpt_guideline_ingestion_pipeline(
     cpt_guidelines = parse_cpt_guidelines_from_pdf(cpt_guideline_file_path)
     cpt_guideline_decision_tree = create_guideline_decision_tree(cpt_guidelines)
 
-    document = CPTGuidelinesDocument(
+    document = CPTGuidelineDocument(
         file_path=str(cpt_guideline_file_path),
         cpt_code=cpt_code,
         guidelines=cpt_guidelines,
@@ -66,6 +66,7 @@ def cpt_guideline_ingestion_pipeline(
 
 
 if __name__ == '__main__':
+    """Script for testing."""
     logging.basicConfig(level=logging.INFO)
     file_path = input('Enter the file path for a CPT guidelines: ')
     cpt_code = input('Enter 5 digit CPT code: ')

@@ -35,7 +35,10 @@ class GuidelineDecisionTree(BaseModel):
         return criteria_operator.value if criteria_operator else None
 
 
-class CPTGuidelinesDocument(BaseModel):
+class CPTGuidelineDocument(BaseModel):
+    """
+    Data model for a document in the 'cpt_guidelines' DB collection.
+    """
     file_path: str | Path
     cpt_code: str
     guidelines: str

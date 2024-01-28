@@ -18,6 +18,10 @@ class DatabaseException(Exception):
 class Storage:
     """
     A mock file storage service class that just stores files on disk.
+
+    Notes
+    -----
+    - In production this could be replaced with S3, Google Cloud Storage, etc.
     """
 
     def __init__(self):

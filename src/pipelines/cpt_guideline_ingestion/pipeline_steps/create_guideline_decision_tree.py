@@ -5,7 +5,7 @@ import logging
 from llama_index.llms import OpenAI
 from llama_index.program import OpenAIPydanticProgram
 
-from db_models.cpt_guidelines import GuidelineDecisionTree
+from data_models.cpt_guideline import GuidelineDecisionTree
 from utils.prompt_utils import multiline_prompt
 
 

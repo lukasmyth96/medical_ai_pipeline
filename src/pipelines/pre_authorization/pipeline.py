@@ -1,48 +1,27 @@
 from __future__ import annotations
 
 import logging
-from enum import Enum
 from pathlib import Path
 
-from pydantic import BaseModel, field_serializer
-
-from db_models.cpt_guidelines import CPTGuidelinesDocument
+from data_models.cpt_guideline import CPTGuidelineDocument
+from data_models.pre_authorization import PreAuthorizationDocument, ExitReason
 from pipelines.pre_authorization.pipeline_steps import (
     index_medical_record,
     extract_requested_cpt_codes,
     extract_prior_treatment_information,
     are_cpt_guideline_criteria_met,
 )
-from pipelines.pre_authorization.pipeline_steps.are_cpt_guideline_criteria_met import CriterionResult
-from pipelines.pre_authorization.pipeline_steps.extract_prior_treatment_information import PriorTreatmentInformation
+
 from services.db import Database, Collection
 from utils.pydantic_utils import pretty_print_pydantic
 
 logging.basicConfig(level=logging.INFO)
 
 
-class ExitReason(Enum):
-    PRIOR_TREATMENT_SUCCESSFUL = 'PRIOR_TREATMENT_SUCCESSFUL'
-    GUIDELINE_CRITERIA_EVALUATED = 'GUIDELINE_CRITERIA_EVALUATED'
-
-
-class PreAuthorizationPipelineResult(BaseModel):
-    cpt_code: str
-    exit_reason: ExitReason
-    prior_treatment: PriorTreatmentInformation
-    guidelines: str
-    are_guideline_criteria_met: bool | None
-    guideline_criteria_results: list[CriterionResult]
-
-    @field_serializer('exit_reason')
-    def serialize_exit_reason(self, exit_reason: ExitReason, *args):
-        return exit_reason.value
-
-
 def pre_authorization_pipeline(
         medical_record_file_path: str | Path,
         force_reindex: bool = False,
-) -> PreAuthorizationPipelineResult:
+) -> PreAuthorizationDocument:
     # 1) Load and index medical record for RAG pipeline.
     index = index_medical_record(
         medical_record_file_path=medical_record_file_path,
@@ -60,7 +39,7 @@ def pre_authorization_pipeline(
     guidelines_document = db.read(
         collection=Collection.CPT_GUIDELINES,
         document_id=cpt_code,
-        output_class=CPTGuidelinesDocument,
+        output_class=CPTGuidelineDocument,
     )
     if not guidelines_document:
         raise RuntimeError(
@@ -75,7 +54,7 @@ def pre_authorization_pipeline(
 
     # 6) If prior treatment was successful, exist pipeline.
     if prior_treatment.was_treatment_attempted and prior_treatment.was_treatment_successful:
-        return PreAuthorizationPipelineResult(
+        return PreAuthorizationDocument(
             cpt_code=cpt_code,
             exit_reason=ExitReason.PRIOR_TREATMENT_SUCCESSFUL,
             prior_treatment=prior_treatment,
@@ -90,7 +69,7 @@ def pre_authorization_pipeline(
         index=index,
     )
 
-    return PreAuthorizationPipelineResult(
+    return PreAuthorizationDocument(
         cpt_code=cpt_code,
         exit_reason=ExitReason.GUIDELINE_CRITERIA_EVALUATED,
         prior_treatment=prior_treatment,
@@ -101,6 +80,8 @@ def pre_authorization_pipeline(
 
 
 if __name__ == '__main__':
+    """Script for testing."""
+    logging.basicConfig(level=logging.INFO)
     file_path = input('Enter the file path for a medical record: ')
     file_path = Path(file_path)
     assert file_path.exists(), 'Medical record file does not exist'

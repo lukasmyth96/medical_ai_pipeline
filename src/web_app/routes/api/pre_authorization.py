@@ -1,6 +1,6 @@
 from fastapi import APIRouter, UploadFile, File
 
-from pipelines.pre_authorization.pipeline import pre_authorization_pipeline, PreAuthorizationPipelineResult
+from pipelines.pre_authorization.pipeline import pre_authorization_pipeline, PreAuthorizationDocument
 from services.storage import Storage, Bucket
 
 router = APIRouter()
@@ -9,7 +9,7 @@ router = APIRouter()
 @router.post('/pre-authorization')
 def pre_authorization_create(
         file: UploadFile = File(...),
-) -> PreAuthorizationPipelineResult:
+) -> PreAuthorizationDocument:
 
     storage = Storage()
     file_path = storage.upload(
