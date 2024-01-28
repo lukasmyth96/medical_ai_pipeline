@@ -5,6 +5,7 @@ from pathlib import Path
 
 from data_models.cpt_guideline import CPTGuidelineDocument
 from data_models.pre_authorization import PreAuthorizationDocument, ExitReason
+from pipelines.exceptions import PipelineException
 from pipelines.pre_authorization.pipeline_steps import (
     index_medical_record,
     extract_requested_cpt_codes,
@@ -31,7 +32,9 @@ def pre_authorization_pipeline(
     # 2) Extract requested CPT code(s) from medical record.
     cpt_codes = extract_requested_cpt_codes(index)
     if not cpt_codes:
-        raise RuntimeError('Could not find any CPT codes in medical record')
+        raise PipelineException(
+            'Could not find any CPT codes in medical record'
+        )
     cpt_code = cpt_codes[0]  # todo handle case with >1 requested procedures.
 
     # 3) Load parsed CPT guidelines from database.
@@ -42,7 +45,7 @@ def pre_authorization_pipeline(
         output_class=CPTGuidelineDocument,
     )
     if not guidelines_document:
-        raise RuntimeError(
+        raise PipelineException(
             f"""
             Guidelines for requested CPT code {cpt_code} not available.
             You must run the CPT Guideline Ingestion pipeline on these guidelines first.
