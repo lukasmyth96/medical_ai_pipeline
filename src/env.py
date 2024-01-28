@@ -17,6 +17,7 @@ class Env(BaseSettings):
     # Database Configuration
     mock_nosql_db_dir: Path = REPO_ROOT_DIR / 'database/mock_nosql_db'
     vector_db_dir: Path = REPO_ROOT_DIR / 'database/vector_db'
+    file_storage_dir: Path = REPO_ROOT_DIR / 'database/file_storage'
 
     model_config = SettingsConfigDict(
         env_file=find_dotenv('.env'),

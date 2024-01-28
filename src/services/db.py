@@ -11,6 +11,7 @@ from env import env
 
 class Collection(Enum):
     CPT_GUIDELINES = 'cpt_guidelines'
+    PRE_AUTHORIZATIONS = 'pre_authorizations'
 
 
 class DatabaseException(Exception):
@@ -20,7 +21,11 @@ class DatabaseException(Exception):
 
 class Database:
     """
-    A mock database service class that just stores data on disk as JSON files.
+    A mock NoSQL database service class that just stores documents on disk as JSON files.
+
+    Notes
+    -----
+    - In production this could be replaced with Mongo DB, DocumentDB, Firestore, etc.
     """
 
     def __init__(self):

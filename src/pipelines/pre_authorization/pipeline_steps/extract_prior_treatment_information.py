@@ -1,19 +1,7 @@
-from typing import Optional
-
 from llama_index import VectorStoreIndex
-from pydantic import BaseModel
 
+from data_models.pre_authorization import PriorTreatmentInformation
 from utils.prompt_utils import multiline_prompt
-
-
-class PriorTreatmentInformation(BaseModel):
-    """Data model for the response of the query to determine
-    whether conservative treatment was attempted and successful."""
-    was_treatment_attempted: bool
-    evidence_of_whether_treatment_was_attempted: Optional[str]
-
-    was_treatment_successful: Optional[bool]
-    evidence_of_whether_treatment_was_successful: Optional[str]
 
 
 def extract_prior_treatment_information(index: VectorStoreIndex) -> PriorTreatmentInformation:

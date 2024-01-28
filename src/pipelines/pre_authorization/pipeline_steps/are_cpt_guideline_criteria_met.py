@@ -5,23 +5,9 @@ from llama_index import VectorStoreIndex, ServiceContext
 from llama_index.llms import OpenAI
 from pydantic import BaseModel
 
-from db_models.cpt_guidelines import Criterion, LogicalOperator, GuidelineDecisionTree
+from data_models.cpt_guideline import Criterion, LogicalOperator, GuidelineDecisionTree
+from data_models.pre_authorization import CPTGuidelineResults, CriterionResult
 from utils.prompt_utils import multiline_prompt
-
-
-class CriterionResult(BaseModel):
-    criterion_id: str
-    criterion: str
-    criterion_question: str | None = None
-    is_criterion_met: bool | None = None
-    reason: str
-    evidence: str | None = None
-    information_required: str | None = None
-
-
-class CPTGuidelineResults(BaseModel):
-    are_criteria_met: bool
-    criteria_results: list[CriterionResult]
 
 
 def are_cpt_guideline_criteria_met(
