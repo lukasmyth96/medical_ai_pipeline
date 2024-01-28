@@ -8,7 +8,7 @@ router = APIRouter()
 
 
 @router.post('/pre-authorization/guidelines')
-def pre_authorization_guidelines_ingest(
+def pre_authorization_guidelines_create(
         cpt_code: str,
         file: UploadFile = File(...),
 ) -> CPTGuidelineDocument:
