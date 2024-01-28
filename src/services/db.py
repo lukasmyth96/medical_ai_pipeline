@@ -11,6 +11,7 @@ from env import env
 
 class Collection(Enum):
     CPT_GUIDELINES = 'cpt_guidelines'
+    PRE_AUTHORIZATIONS = 'pre_authorizations'
 
 
 class DatabaseException(Exception):

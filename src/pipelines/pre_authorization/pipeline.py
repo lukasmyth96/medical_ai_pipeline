@@ -33,7 +33,7 @@ def pre_authorization_pipeline(
     cpt_codes = extract_requested_cpt_codes(index)
     if not cpt_codes:
         raise PipelineException(
-            'Could not find any CPT codes in medical record'
+            detail='Could not find CPT code for requested procedure in medical record'
         )
     cpt_code = cpt_codes[0]  # todo handle case with >1 requested procedures.
 
@@ -46,10 +46,9 @@ def pre_authorization_pipeline(
     )
     if not guidelines_document:
         raise PipelineException(
-            f"""
-            Guidelines for requested CPT code {cpt_code} not available.
-            You must run the CPT Guideline Ingestion pipeline on these guidelines first.
-            """
+            detail=f"Guidelines for requested CPT code {cpt_code} have not been ingested yet. "
+                   f"Submit the guidelines file via the POST /pre-authorization/guidelines endpoint.",
+            status_code=400,
         )
 
     # 4) Determine whether prior treatment was attempted and successful.

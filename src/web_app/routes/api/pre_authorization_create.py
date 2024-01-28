@@ -51,12 +51,12 @@ def pre_authorization_create(
         )
     except PipelineException as exc:
         raise HTTPException(
-            detail=exc.msg,
-            status_code=500,
+            detail=exc.detail,
+            status_code=exc.status_code,
         )
 
     Database().create(
-        collection=Collection.CPT_GUIDELINES,
+        collection=Collection.PRE_AUTHORIZATIONS,
         document=pre_authorization_document,
         document_id=uuid4(),
         overwrite=False,

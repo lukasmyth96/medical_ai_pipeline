@@ -1,6 +1,6 @@
 import re
 
-from fastapi import APIRouter, UploadFile, File, HTTPException
+from fastapi import APIRouter, UploadFile, File, HTTPException, Form
 
 from data_models.cpt_guideline import CPTGuidelineDocument
 from pipelines.cpt_guideline_ingestion.pipeline import cpt_guideline_ingestion_pipeline
@@ -13,7 +13,7 @@ router = APIRouter()
 
 @router.post('/pre-authorization/guidelines')
 def pre_authorization_guidelines_create(
-        cpt_code: str,
+        cpt_code: str = Form(...),
         guidelines_file: UploadFile = File(..., media_type='application/pdf'),
 ) -> CPTGuidelineDocument:
     """
@@ -56,8 +56,8 @@ def pre_authorization_guidelines_create(
         )
     except PipelineException as exc:
         raise HTTPException(
-            detail=exc.msg,
-            status_code=500,
+            detail=exc.detail,
+            status_code=exc.status_code,
         )
 
     Database().create(
