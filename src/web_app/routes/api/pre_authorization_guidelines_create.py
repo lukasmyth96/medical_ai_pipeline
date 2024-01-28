@@ -5,6 +5,7 @@ from fastapi import APIRouter, UploadFile, File, HTTPException
 from data_models.cpt_guideline import CPTGuidelineDocument
 from pipelines.cpt_guideline_ingestion.pipeline import cpt_guideline_ingestion_pipeline
 from pipelines.exceptions import PipelineException
+from services.db import Database, Collection
 from services.storage import Storage, Bucket
 
 router = APIRouter()
@@ -52,13 +53,19 @@ def pre_authorization_guidelines_create(
         guideline_document = cpt_guideline_ingestion_pipeline(
             cpt_guideline_file_path=file_path,
             cpt_code=cpt_code,
-            overwrite=True,
         )
     except PipelineException as exc:
         raise HTTPException(
             detail=exc.msg,
             status_code=500,
         )
+
+    Database().create(
+        collection=Collection.CPT_GUIDELINES,
+        document=guideline_document,
+        document_id=cpt_code,
+        overwrite=True,
+    )
 
     return guideline_document
 

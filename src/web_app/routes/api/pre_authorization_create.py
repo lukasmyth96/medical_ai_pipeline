@@ -1,7 +1,10 @@
+from uuid import uuid4
+
 from fastapi import APIRouter, UploadFile, File, HTTPException
 
 from pipelines.exceptions import PipelineException
 from pipelines.pre_authorization.pipeline import pre_authorization_pipeline, PreAuthorizationDocument
+from services.db import Database, Collection
 from services.storage import Storage, Bucket
 
 router = APIRouter()
@@ -51,5 +54,12 @@ def pre_authorization_create(
             detail=exc.msg,
             status_code=500,
         )
+
+    Database().create(
+        collection=Collection.CPT_GUIDELINES,
+        document=pre_authorization_document,
+        document_id=uuid4(),
+        overwrite=False,
+    )
 
     return pre_authorization_document
